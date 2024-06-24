@@ -36,6 +36,7 @@ struct Printer {
   const std::string model;
   const std::string location;
   const std::string comment;
+
   const bool default;
   const bool available;
 
@@ -70,6 +71,7 @@ class PrintJob {
   int id() { return index; }
 
   std::vector<Printer> listPrinters();
+  std::pair<short,short> getPaperSize(const std::string& name);
 
   bool printPdf(const std::string& name,
                 std::string printer,

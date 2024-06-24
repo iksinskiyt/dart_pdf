@@ -175,6 +175,27 @@ bool PrintJob::printPdf(const std::string& name,
   return true;
 }
 
+std::pair<short,short> PrintJob::getPaperSize(const std::string& printerName){
+  HANDLE hPrinter;
+  std::pair<short,short> size;
+  if (OpenPrinterA(const_cast<LPSTR>(printerName.c_str()), &hPrinter, NULL)) {
+    DWORD needed;
+    GetPrinter(hPrinter, 2, NULL, 0, &needed);
+    if(needed > 0){
+      PRINTER_INFO_2* pi2 = (PRINTER_INFO_2*)GlobalAlloc(GPTR, needed);
+      if(pi2){
+        if (GetPrinter(hPrinter, 2, (LPBYTE)pi2, needed, &needed)) {
+          DEVMODE* devmode = pi2->pDevMode;
+          size = {devmode->dmPaperLength,devmode->dmPaperWidth};
+        }
+      }
+      GlobalFree(pi2);
+    }
+    ClosePrinter(hPrinter);
+  }
+  return size;
+}
+
 std::vector<Printer> PrintJob::listPrinters() {
   LPTSTR defaultPrinter;
   DWORD size = 0;

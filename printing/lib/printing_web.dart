@@ -404,6 +404,9 @@ class PrintingPlugin extends PrintingPlatform {
       jsDoc.destroy();
     }
   }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _WebPdfRaster extends PdfRaster {

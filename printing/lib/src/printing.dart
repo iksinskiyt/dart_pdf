@@ -64,6 +64,10 @@ mixin Printing {
     return PrintingPlatform.instance.listPrinters();
   }
 
+  static Future<List<int>> getPaperSize(String name){
+    return PrintingPlatform.instance.getPaperSize(name);
+  }
+
   /// Opens the native printer picker interface, and returns the URL of the
   /// selected printer.
   ///
