@@ -127,6 +127,22 @@ class PrintingPlugin : public flutter::Plugin {
         pl.push_back(mp);
       }
       result->Success(pl);
+    } else if (method_call.method_name().compare("getPaperSize") == 0) {
+      const auto* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+      auto vName = arguments->find(flutter::EncodableValue("name"));
+      auto name = vName != arguments->end() && !vName->second.IsNull()
+                      ? std::get<std::string>(vName->second)
+                      : std::string{"document.pdf"};
+      
+      auto job = std::make_unique<PrintJob>(&printing, -1);
+      auto size = job->getPaperSize(name);
+      auto paperSize = flutter::EncodableList{
+        flutter::EncodableValue(size.first),
+        flutter::EncodableValue(size.second)
+      };
+      result->Success(paperSize);
+
     } else if (method_call.method_name().compare("rasterPdf") == 0) {
       const auto* arguments =
           std::get_if<flutter::EncodableMap>(method_call.arguments());

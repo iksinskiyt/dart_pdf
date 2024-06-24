@@ -51,6 +51,7 @@ ref
 
 cache_*
 
+printing/.vs
 .vscode
 package.json
 
