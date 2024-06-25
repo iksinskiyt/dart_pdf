@@ -136,12 +136,17 @@ class PrintingPlugin : public flutter::Plugin {
                       : std::string{"document.pdf"};
       
       auto job = std::make_unique<PrintJob>(&printing, -1);
-      auto size = job->getPaperSize(name);
-      auto paperSize = flutter::EncodableList{
-        flutter::EncodableValue(size.first),
-        flutter::EncodableValue(size.second)
-      };
-      result->Success(paperSize);
+      auto sizes = job->getPaperSize(name);
+      
+      flutter::EncodableList paperSizes;
+      for (const auto& size : sizes) {
+          flutter::EncodableList paperSize{
+              flutter::EncodableValue(static_cast<int64_t>(size.first)), // Convert 'first' to int64_t
+              flutter::EncodableValue(static_cast<int64_t>(size.second)) // Convert 'second' to int64_t
+          };
+          paperSizes.push_back(flutter::EncodableValue(paperSize));
+      }
+      result->Success(paperSizes);
 
     } else if (method_call.method_name().compare("rasterPdf") == 0) {
       const auto* arguments =

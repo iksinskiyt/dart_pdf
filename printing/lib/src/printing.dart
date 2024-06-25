@@ -64,7 +64,7 @@ mixin Printing {
     return PrintingPlatform.instance.listPrinters();
   }
 
-  static Future<List<int>> getPaperSize(String name){
+  static Future<List<Object?>> getPaperSize(String name){
     return PrintingPlatform.instance.getPaperSize(name);
   }
 

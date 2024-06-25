@@ -71,7 +71,7 @@ class PrintJob {
   int id() { return index; }
 
   std::vector<Printer> listPrinters();
-  std::pair<short,short> getPaperSize(const std::string& name);
+  std::vector<std::pair<long, long>> getPaperSize(const std::string& name);
 
   bool printPdf(const std::string& name,
                 std::string printer,

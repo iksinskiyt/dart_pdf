@@ -175,25 +175,26 @@ bool PrintJob::printPdf(const std::string& name,
   return true;
 }
 
-std::pair<short,short> PrintJob::getPaperSize(const std::string& printerName){
-  HANDLE hPrinter;
-  std::pair<short,short> size;
-  if (OpenPrinterA(const_cast<LPSTR>(printerName.c_str()), &hPrinter, NULL)) {
-    DWORD needed;
-    GetPrinter(hPrinter, 2, NULL, 0, &needed);
-    if(needed > 0){
-      PRINTER_INFO_2* pi2 = (PRINTER_INFO_2*)GlobalAlloc(GPTR, needed);
-      if(pi2){
-        if (GetPrinter(hPrinter, 2, (LPBYTE)pi2, needed, &needed)) {
-          DEVMODE* devmode = pi2->pDevMode;
-          size = {devmode->dmPaperLength,devmode->dmPaperWidth};
+std::vector<std::pair<long, long>> PrintJob::getPaperSize(const std::string& printerName){
+    HANDLE hPrinter;
+    std::vector<std::pair<long, long>> sizes;
+    if (OpenPrinterA(const_cast<LPSTR>(printerName.c_str()), &hPrinter, NULL)) {
+        DWORD needed = 0;
+        DWORD needed1 = 0;
+        EnumForms(hPrinter, 1, NULL, 0, &needed, &needed1);
+        if (needed > 0) {
+            std::vector<BYTE> formBuffer(needed);
+            DWORD returned;
+            if (EnumForms(hPrinter, 1, formBuffer.data(), needed, &needed, &returned)) {
+                FORM_INFO_1* forms = reinterpret_cast<FORM_INFO_1*>(formBuffer.data());
+                for (DWORD i = 0; i < returned; ++i) {
+                    sizes.emplace_back(forms[i].Size.cx, forms[i].Size.cy);
+                }
+            }
         }
-      }
-      GlobalFree(pi2);
+        ClosePrinter(hPrinter);
     }
-    ClosePrinter(hPrinter);
-  }
-  return size;
+    return sizes;
 }
 
 std::vector<Printer> PrintJob::listPrinters() {

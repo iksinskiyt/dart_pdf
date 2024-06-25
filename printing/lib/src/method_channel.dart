@@ -224,14 +224,14 @@ class MethodChannelPrinting extends PrintingPlatform {
   }
 
   @override
-  Future<List<int>> getPaperSize(String name) async {
+  Future<List<Object?>> getPaperSize(String name) async {
     final params = <String,dynamic>{
       'name': name
     };
     final list = 
-      await _channel.invokeMethod<List<dynamic>>('getPaperSize',params);
+      await _channel.invokeMethod<List<Object?>>('getPaperSize',params);
 
-    return [list![0],list[1]];
+    return list!;
   }
 
   @override
